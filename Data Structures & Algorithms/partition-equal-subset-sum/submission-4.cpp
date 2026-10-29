@@ -1,0 +1,34 @@
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        int total = std::accumulate(nums.begin(), nums.end(), 0);
+        if (total % 2 == 1) {
+            return false;
+        }
+        int half = total / 2;
+        // std::vector<std::vector<int>>> table(nums.size(), std::vector());
+        
+        return canCreate(half, 0, nums);
+    }
+
+private:
+    unordered_map<long long, bool> memo;
+    long long hash(int x, int y) {
+        return (static_cast<long long>(x) << 32) | y;
+    }
+    bool canCreate(int target, int i, vector<int>& nums) {
+        if (memo.contains(hash(target, i))) {
+            return memo.at(hash(target, i));
+        }
+        if (target == 0) {
+            return true;
+        } else if (target < 0) {
+            return false;
+        } else if (i == nums.size()) {
+            return false;
+        }
+        int newTarget = target - nums[i];
+        memo[hash(target, i)] = canCreate(newTarget, i + 1, nums) || canCreate(target, i + 1, nums);
+        return memo[hash(target, i)];
+    }
+};
